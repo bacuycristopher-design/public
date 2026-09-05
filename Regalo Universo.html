@@ -622,7 +622,7 @@
   /* partículas del Big Bang — colores rojo/ámbar/naranja */
   var BANG_PTS = [];
   (function(){
-    for(var i = 0; i < 500; i++){
+    for(var i = 0; i < (IW < 768 ? 180 : 500); i++){
       var ang = irand(0, Math.PI*2);
       var spd = irand(1, 14);
       BANG_PTS.push({
@@ -978,9 +978,10 @@
   document.head.appendChild(style);
 })();
 
-/* ────────────────────────────────
-   CANVAS SETUP
-──────────────────────────────── */
+/* ── DETECCIÓN DE DISPOSITIVO LENTO (móvil) ── */
+var IS_LOW_END = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) || window.innerWidth < 768;
+
+
 var cv  = document.getElementById('cv');
 var ctx = cv.getContext('2d');
 var W = 0, H = 0;
@@ -1024,7 +1025,7 @@ var gameStarted = false;
    ESTRELLAS DE FONDO
 ──────────────────────────────── */
 var STARS = [];
-for(var i = 0; i < 900; i++){
+for(var i = 0; i < (IS_LOW_END ? 300 : 900); i++){
   var th = rand(0, Math.PI*2), ph = Math.acos(2*Math.random()-1);
   var rr = rand(1000, 2000);
   STARS.push({
@@ -1049,7 +1050,7 @@ var nebulaColors = [
   ['150,30,20', '70,0,0'],      /* granate */
   ['180,100,0', '80,40,0'],     /* naranja quemado */
 ];
-for(var n = 0; n < 7; n++){
+for(var n = 0; n < (IS_LOW_END ? 3 : 7); n++){
   var na = rand(0, Math.PI*2), nr = rand(400, 950);
   var nc = nebulaColors[n % nebulaColors.length];
   NEBULAS.push({
@@ -1068,7 +1069,7 @@ for(var n = 0; n < 7; n++){
    GALAXIA ESPIRAL PRINCIPAL (grande)
 ──────────────────────────────── */
 var GALAXY = [];
-var G_ARMS = 4, G_PTS = 1000, G_CORE = 600;
+var G_ARMS = 4, G_PTS = IS_LOW_END ? 350 : 1000, G_CORE = IS_LOW_END ? 150 : 600;
 
 for(var arm = 0; arm < G_ARMS; arm++){
   var aOff = (arm / G_ARMS) * Math.PI * 2;
@@ -1163,7 +1164,7 @@ for(var ci = 0; ci < 4; ci++) COMETS.push(spawnComet());
    PARTÍCULAS DE POLVO — tonos ámbar/verde
 ──────────────────────────────── */
 var DUST = [];
-for(var di = 0; di < 200; di++){
+for(var di = 0; di < (IS_LOW_END ? 60 : 200); di++){
   var da = rand(0, Math.PI*2), dr = rand(200, 1100);
   DUST.push({
     x: Math.cos(da)*dr, y: rand(-150,150), z: Math.sin(da)*dr,
@@ -1391,7 +1392,15 @@ function drawPlanet(pl){
   }
 }
 
-function render(){
+/* limitador de FPS para móviles */
+var _lastFrame = 0;
+var _fpsCap = IS_LOW_END ? 33 : 0; /* 30fps en móvil, sin límite en desktop */
+
+function render(now){
+  if(_fpsCap > 0){
+    if(now - _lastFrame < _fpsCap){ requestAnimationFrame(render); return; }
+    _lastFrame = now;
+  }
   ctx.clearRect(0, 0, W, H);
   t++;
 
@@ -1704,7 +1713,7 @@ function render(){
 
   requestAnimationFrame(render);
 }
-render();
+render(0);
 
 /* ────────────────────────────────
    CONTROLES DE CÁMARA
