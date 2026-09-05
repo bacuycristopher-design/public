@@ -1,0 +1,1948 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sweet Home — Para ti, Lia 🏚️</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Great+Vibes&family=Quicksand:wght@400;600&display=swap');
+
+    /* ══ PALETA SWEET HOME ══
+       --rojo    : #c0392b / #e74c3c   (sangre / peligro)
+       --ambar   : #d4a017 / #f0c040   (luz de emergencia)
+       --verde   : #1a3a2a / #2e7d52   (militar / supervivencia)
+       --negro   : #050a05 / #0d1a0f
+       --blanco  : #e8e0d0             (papel desgastado)
+    */
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: #000;
+      overflow: hidden;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: block;
+    }
+
+    /* ── MODAL BIENVENIDA ── */
+    #modal-inicio {
+      position: fixed; inset: 0;
+      background: radial-gradient(ellipse at center, #0d1a0f 0%, #050a05 100%);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.8s ease;
+    }
+    #modal-inicio.oculto { opacity: 0; pointer-events: none; }
+
+    #modal-inicio .estrella-deco {
+      font-size: 3rem;
+      animation: floatDeco 3s ease-in-out infinite;
+      margin-bottom: 0.5rem;
+    }
+    @keyframes floatDeco {
+      0%, 100% { transform: translateY(0) rotate(-5deg); }
+      50%       { transform: translateY(-14px) rotate(5deg); }
+    }
+
+    #modal-inicio h1 {
+      font-family: 'Creepster', 'Great Vibes', cursive;
+      font-size: clamp(2.2rem, 7vw, 4rem);
+      color: #e8d8b0;
+      text-shadow: 0 0 30px #c0392b, 0 0 60px #8b0000;
+      text-align: center;
+      margin-bottom: 0.6rem;
+      line-height: 1.2;
+      letter-spacing: 2px;
+    }
+    #modal-inicio p {
+      color: rgba(200,190,160,0.75);
+      font-size: clamp(0.85rem, 2.5vw, 1rem);
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    #btn-entrar {
+      background: linear-gradient(135deg, #7b0000, #c0392b, #8b0000);
+      color: #f0e0c0;
+      border: 1px solid rgba(192,57,43,0.6);
+      padding: 0.85rem 2.8rem;
+      border-radius: 4px;
+      font-size: clamp(1rem, 3vw, 1.2rem);
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 0 25px #c0392b88, 0 0 50px #7b000044;
+      transition: transform 0.2s, box-shadow 0.2s;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    #btn-entrar:hover { transform: scale(1.07); box-shadow: 0 0 40px #e74c3c, 0 0 80px #c0392b66; }
+
+    /* partículas del modal */
+    #modal-inicio .floating-stars {
+      position: absolute; inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    #modal-inicio .floating-stars span {
+      position: absolute;
+      display: block;
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: #fff;
+      animation: twinkleFloat linear infinite;
+      opacity: 0;
+    }
+
+    /* ── TÍTULO FLOTANTE ── */
+    #titulo {
+      position: fixed;
+      top: 18px; width: 100%;
+      text-align: center;
+      z-index: 10;
+      pointer-events: none;
+      opacity: 0;
+      animation: aparecer 1s forwards 0.5s;
+    }
+    #titulo span {
+      font-family: 'Creepster', cursive;
+      font-size: clamp(1.4rem, 4vw, 2.4rem);
+      color: #e8d8b0;
+      text-shadow: 0 0 20px #c0392b, 0 0 50px #8b0000;
+      letter-spacing: 3px;
+      animation: glowRed 2.5s ease-in-out infinite;
+    }
+    @keyframes glowRed {
+      0%, 100% { text-shadow: 0 0 15px #c0392b, 0 0 40px #8b0000; }
+      50%       { text-shadow: 0 0 30px #e74c3c, 0 0 80px #c0392b, 0 0 120px #7b0000; }
+    }
+    @keyframes aparecer { to { opacity: 1; } }
+
+    /* ── BOTÓN CARTA ── */
+    #btn-carta {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      width: 62px; height: 62px;
+      border-radius: 4px;
+      border: 1px solid rgba(192,57,43,0.5);
+      background: linear-gradient(135deg, #7b0000, #c0392b);
+      color: #f0e0c0;
+      font-size: 1.7rem;
+      cursor: pointer;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 22px #c0392b88, 0 0 44px #7b000055;
+      animation: floatBtn 3.5s ease-in-out infinite;
+      transition: transform 0.2s;
+    }
+    #btn-carta:hover { transform: scale(1.15); }
+    @keyframes floatBtn {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-10px); }
+    }
+
+    /* ── BOTÓN MÚSICA ── */
+    #btn-musica {
+      position: fixed;
+      bottom: 28px; left: 28px;
+      width: 52px; height: 52px;
+      border-radius: 4px;
+      border: 2px solid rgba(192,57,43,0.4);
+      background: rgba(13,26,15,0.85);
+      color: #d4a017;
+      font-size: 1.4rem;
+      cursor: pointer;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s;
+    }
+    #btn-musica:hover { background: rgba(123,0,0,0.4); }
+    #btn-musica.playing { color: #f0c040; box-shadow: 0 0 18px #d4a017; }
+
+    /* ── MODAL CARTA ── */
+    #overlay-carta {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.9);
+      z-index: 200;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(4px);
+      overflow-y: auto;
+    }
+    #overlay-carta.on { display: flex; }
+
+    #carta {
+      background: linear-gradient(160deg, #0a1208, #0d1a0f, #050a05);
+      border: 1.5px solid rgba(192,57,43,0.45);
+      border-radius: 6px;
+      padding: 2.5rem 2rem 2rem;
+      max-width: 480px;
+      width: 92vw;
+      max-height: 88vh;
+      overflow-y: auto;
+      text-align: center;
+      box-shadow: 0 0 60px #c0392b44, 0 0 120px #7b000033;
+      animation: openCarta 0.5s cubic-bezier(.175,.885,.32,1.275);
+      position: relative;
+    }
+    /* textura de papel desgastado */
+    #carta::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='1.5' fill='rgba(255,200,100,0.08)'/%3E%3Ccircle cx='80' cy='15' r='1' fill='rgba(255,200,100,0.06)'/%3E%3Ccircle cx='150' cy='50' r='1.5' fill='rgba(255,200,100,0.07)'/%3E%3Ccircle cx='120' cy='100' r='1' fill='rgba(255,200,100,0.05)'/%3E%3Ccircle cx='60' cy='150' r='1.5' fill='rgba(255,200,100,0.06)'/%3E%3Ccircle cx='170' cy='170' r='1' fill='rgba(255,200,100,0.08)'/%3E%3C/svg%3E");
+      pointer-events: none;
+      border-radius: 6px;
+    }
+    @keyframes openCarta {
+      from { transform: scale(0.2) rotateY(90deg); opacity: 0; }
+      to   { transform: scale(1)   rotateY(0deg);  opacity: 1; }
+    }
+
+    #carta .icono { font-size: 2.8rem; margin-bottom: 0.6rem; animation: spin-slow 8s linear infinite; display: inline-block; }
+    @keyframes spin-slow { to { transform: rotate(360deg); } }
+
+    #carta h2 {
+      font-family: 'Creepster', cursive;
+      font-size: clamp(1.8rem, 6vw, 2.6rem);
+      color: #e8d8b0;
+      text-shadow: 0 0 20px #c0392b;
+      margin-bottom: 0.4rem;
+      letter-spacing: 2px;
+    }
+    #carta .cita-sh {
+      font-family: 'Quicksand', sans-serif;
+      font-style: italic;
+      color: #d4a017;
+      font-size: clamp(0.8rem, 2.2vw, 0.95rem);
+      margin-bottom: 1.2rem;
+      opacity: 0.85;
+    }
+    #carta .linea-divider {
+      width: 60%; height: 1px;
+      background: linear-gradient(90deg, transparent, #c0392b, transparent);
+      margin: 0 auto 1.4rem;
+    }
+    #carta p {
+      color: #d8cdb0;
+      font-size: clamp(0.88rem, 2.5vw, 1rem);
+      line-height: 1.9;
+      margin-bottom: 1.2rem;
+      text-align: left;
+    }
+    #carta p .sh-ref {
+      color: #e74c3c;
+      font-weight: 600;
+    }
+    #carta .firma {
+      font-family: 'Great Vibes', cursive;
+      color: #d4a017;
+      font-size: clamp(1.2rem, 4vw, 1.5rem);
+      margin-bottom: 1.6rem;
+    }
+    #carta .emojis-deco {
+      font-size: 1.4rem;
+      letter-spacing: 6px;
+      margin-bottom: 1.5rem;
+    }
+    #carta button {
+      background: linear-gradient(135deg, #7b0000, #c0392b);
+      color: #f0e0c0;
+      border: 1px solid rgba(192,57,43,0.5);
+      padding: 0.6rem 2rem;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      font-family: 'Quicksand', sans-serif;
+      cursor: pointer;
+      box-shadow: 0 0 18px #c0392b66;
+      transition: transform 0.2s, box-shadow 0.2s;
+      letter-spacing: 1px;
+    }
+    #carta button:hover { transform: scale(1.06); box-shadow: 0 0 28px #e74c3c; }
+
+    /* ── SOBRE ANIMADO ── */
+    #sobre-wrapper {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 200;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(4px);
+    }
+    #sobre-wrapper.on { display: flex; }
+
+    #sobre-scene {
+      perspective: 800px;
+      width: clamp(260px, 70vw, 380px);
+      height: clamp(180px, 50vw, 260px);
+      cursor: pointer;
+    }
+    #sobre-box {
+      position: relative;
+      width: 100%; height: 100%;
+      transform-style: preserve-3d;
+    }
+    .sobre-body {
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg, #1a0a08, #2d1208);
+      border: 1.5px solid rgba(192,57,43,0.5);
+      border-radius: 4px;
+      box-shadow: 0 0 50px #c0392b88, 0 0 100px #7b000033;
+      overflow: hidden;
+    }
+    .sobre-body::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 55%;
+      background: linear-gradient(175deg, #2d1208 0%, #1a0a08 100%);
+      clip-path: polygon(0 100%, 50% 0, 100% 100%);
+    }
+    .sobre-body::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(135deg, transparent 49.5%, rgba(192,57,43,0.2) 49.5%, rgba(192,57,43,0.2) 50.5%, transparent 50.5%),
+        linear-gradient(225deg, transparent 49.5%, rgba(192,57,43,0.2) 49.5%, rgba(192,57,43,0.2) 50.5%, transparent 50.5%);
+    }
+    .sobre-flap {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 52%;
+      background: linear-gradient(175deg, #3d1208, #2d0e06);
+      border-bottom: 1px solid rgba(192,57,43,0.3);
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      transform-origin: top center;
+      transition: transform 0.8s cubic-bezier(.645,.045,.355,1);
+    }
+    .sobre-flap.open { transform: rotateX(180deg); }
+    .sobre-emoji {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: clamp(2rem, 8vw, 3.5rem);
+      animation: sobrePulse 1.5s ease-in-out infinite;
+      z-index: 2;
+    }
+    @keyframes sobrePulse {
+      0%,100% { transform: translate(-50%,-50%) scale(1); }
+      50%      { transform: translate(-50%,-50%) scale(1.12); }
+    }
+    .sobre-hint {
+      position: absolute;
+      bottom: -2.2rem; left: 0; right: 0;
+      text-align: center;
+      color: rgba(212,160,23,0.8);
+      font-size: 0.8rem;
+      font-family: 'Quicksand', sans-serif;
+      animation: sobrePulse 2s ease-in-out infinite;
+    }
+    .sobre-carta-mini {
+      position: absolute;
+      bottom: 10%; left: 50%;
+      transform: translateX(-50%) translateY(100%);
+      width: 85%;
+      background: linear-gradient(160deg, #0a1208, #0d1a0f);
+      border: 1px solid rgba(192,57,43,0.4);
+      border-radius: 4px;
+      padding: 0.8rem;
+      text-align: center;
+      font-family: 'Creepster', cursive;
+      color: #e8d8b0;
+      font-size: clamp(0.9rem, 3vw, 1.2rem);
+      transition: transform 0.7s cubic-bezier(.175,.885,.32,1.275) 0.5s;
+      z-index: 1;
+      letter-spacing: 1px;
+    }
+    .sobre-carta-mini.salir { transform: translateX(-50%) translateY(-60%); }
+
+    /* ── BOTÓN CONSTELACIÓN ── */
+    #btn-constelacion {
+      position: fixed;
+      bottom: 28px; right: 102px;
+      width: 52px; height: 52px;
+      border-radius: 4px;
+      border: 2px solid rgba(192,57,43,0.4);
+      background: rgba(13,26,15,0.85);
+      color: #d4a017;
+      font-size: 1.3rem;
+      cursor: pointer;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s;
+    }
+    #btn-constelacion:hover  { background: rgba(123,0,0,0.4); }
+    #btn-constelacion.active { color: #f0c040; box-shadow: 0 0 18px #d4a017; border-color: rgba(212,160,23,0.7); }
+
+    /* ── HINT ── */
+    #hint {
+      position: fixed;
+      bottom: 100px; width: 100%;
+      text-align: center;
+      color: rgba(212,160,23,0.55);
+      font-size: 0.75rem;
+      pointer-events: none;
+      z-index: 10;
+      opacity: 0;
+      animation: aparecer 1s forwards 1s, bye 1s forwards 8s;
+    }
+    @keyframes bye { to { opacity: 0; } }
+
+    /* ── CONTADOR ── */
+    #counter {
+      position: fixed;
+      top: 18px; left: 20px;
+      color: rgba(212,160,23,0.6);
+      font-size: 0.75rem;
+      z-index: 10;
+      pointer-events: none;
+      opacity: 0;
+      animation: aparecer 1s forwards 1.5s;
+    }
+
+    /* ── CITA FLOTANTE SWEET HOME ── */
+    #cita-sh {
+      position: fixed;
+      bottom: 110px; width: 100%;
+      text-align: center;
+      pointer-events: none;
+      z-index: 10;
+      opacity: 0;
+      transition: opacity 1.5s ease;
+    }
+    #cita-sh.visible { opacity: 1; }
+    #cita-sh p {
+      font-family: 'Quicksand', sans-serif;
+      font-style: italic;
+      color: rgba(212,160,23,0.85);
+      font-size: clamp(0.75rem, 2vw, 0.95rem);
+      text-shadow: 0 0 12px #d4a01788;
+      padding: 0 1rem;
+    }
+    #cita-sh span {
+      display: block;
+      color: rgba(192,57,43,0.7);
+      font-size: 0.7rem;
+      margin-top: 0.3rem;
+    }
+
+    /* ── INTRO ── */
+    #intro-screen {
+      position: fixed; inset: 0;
+      background: #050a05;
+      z-index: 99999;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      transition: opacity 1s ease;
+    }
+    #intro-screen.fadeout { opacity: 0; pointer-events: none; }
+    #intro-canvas {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+    }
+    #intro-text {
+      position: relative; z-index: 2;
+      text-align: center; pointer-events: none;
+    }
+    #intro-phase {
+      font-family: 'Quicksand', sans-serif;
+      font-size: clamp(0.9rem, 3vw, 1.3rem);
+      color: rgba(212,160,23,0.9);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      text-shadow: 0 0 20px #d4a017;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      margin-bottom: 1.2rem;
+    }
+    #intro-phase.visible { opacity: 1; }
+    #intro-title {
+      font-family: 'Creepster', cursive;
+      font-size: clamp(2rem, 7vw, 4.5rem);
+      color: #e8d8b0;
+      text-shadow: 0 0 40px #c0392b, 0 0 80px #7b0000;
+      letter-spacing: 4px;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: opacity 1s ease, transform 1s cubic-bezier(.175,.885,.32,1.275);
+    }
+    #intro-title.visible { opacity: 1; transform: scale(1); }
+    #intro-bar-wrap {
+      margin-top: 2rem;
+      width: clamp(180px, 40vw, 320px);
+      height: 3px;
+      background: rgba(192,57,43,0.2);
+      border-radius: 2px;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    #intro-bar-wrap.visible { opacity: 1; }
+    #intro-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #7b0000, #c0392b, #d4a017);
+      border-radius: 2px;
+      box-shadow: 0 0 10px #c0392b;
+      transition: width 0.1s linear;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PANTALLA INTRO CREACIÓN DEL UNIVERSO -->
+  <div id="intro-screen" style="display:none;opacity:0;">
+    <canvas id="intro-canvas"></canvas>
+    <div id="intro-text">
+      <div id="intro-phase"></div>
+      <div id="intro-title">Para ti ✨</div>
+      <div id="intro-bar-wrap"><div id="intro-bar"></div></div>
+    </div>
+  </div>
+
+  <!-- MODAL INICIO -->
+  <div id="modal-inicio">
+    <div class="floating-stars" id="floating-stars"></div>
+    <div class="estrella-deco">�️</div>
+    <h1>Sweet Home<br>Para ti, Lia</h1>
+    <p>Incluso en el fin del mundo, tú eres mi lugar seguro 🖤</p>
+    <button id="btn-entrar">Abrir regalo 🎁</button>
+  </div>
+
+  <canvas id="cv"></canvas>
+
+  <div id="titulo"><span>🏚️ Sweet Home — Para ti, Lia</span></div>
+  <div id="hint">Arrastra para explorar · Rueda para hacer zoom</div>
+  <div id="counter">🌟 <span id="star-count">0</span> estrellas</div>
+
+  <!-- CITA ANIMADA SWEET HOME -->
+  <div id="cita-sh">
+    <p id="cita-texto"></p>
+    <span id="cita-fuente">— Sweet Home</span>
+  </div>
+
+  <!-- BOTONES -->
+  <button id="btn-carta" title="Leer tu carta">💌</button>
+  <button id="btn-musica" title="Música">🎵</button>
+  <button id="btn-constelacion" title="Tu constelación">✦</button>
+
+  <!-- SOBRE ANIMADO -->
+  <div id="sobre-wrapper">
+    <div id="sobre-scene">
+      <div id="sobre-box">
+        <div class="sobre-body"></div>
+        <div class="sobre-flap" id="sobre-flap"></div>
+        <div class="sobre-carta-mini" id="sobre-carta-mini">Para ti, Lia 🏚️</div>
+        <div class="sobre-emoji">💌</div>
+      </div>
+      <div class="sobre-hint">Toca para abrir</div>
+    </div>
+  </div>
+
+  <!-- CARTA -->
+  <div id="overlay-carta">
+    <div id="carta">
+      <div class="icono">🏚️</div>
+      <h2>Para ti, Lia</h2>
+      <div class="cita-sh">"Ser humano significa luchar para seguir siéndolo."</div>
+      <div class="linea-divider"></div>
+      <p id="carta-p1"></p>
+      <p id="carta-p2"></p>
+      <p id="carta-p3"></p>
+      <div class="emojis-deco">🖤 �️ ⚔️ � �</div>
+      <div class="firma" id="carta-firma"></div>
+      <button onclick="cerrarCarta()">Cerrar</button>
+    </div>
+  </div>
+
+  <audio id="audio" loop>
+    <source src="https://github.com/bacuycristopher-design/public/raw/main/Sweet%20Home.mp3" type="audio/mpeg">
+  </audio>
+
+<script>
+"use strict";
+
+/* ════════════════════════════════════════════════
+   ANIMACIÓN INTRO: CREACIÓN DEL UNIVERSO
+   Fases: oscuridad → singularidad → Big Bang →
+          expansión → estrellas → galaxia → listo
+════════════════════════════════════════════════ */
+(function(){
+  var ic  = document.getElementById('intro-canvas');
+  var ictx = ic.getContext('2d');
+  var IW, IH;
+
+  function resizeIntro(){
+    IW = ic.width  = window.innerWidth;
+    IH = ic.height = window.innerHeight;
+  }
+  resizeIntro();
+  window.addEventListener('resize', resizeIntro);
+
+  /* ── utilidades ── */
+  function irand(a,b){ return a + Math.random()*(b-a); }
+  function easeIn(t){ return t*t; }
+  function easeOutQ(t){ return 1-(1-t)*(1-t); }
+
+  /* ── estado de la animación ── */
+  var introFrame  = 0;
+  var introDone   = false;
+
+  /*
+    Timeline (60fps aprox):
+      0   – 40   : oscuridad total, aparece punto blanco (singularidad)
+      40  – 80   : singularidad crece y pulsa
+      80  – 110  : BIG BANG — flash blanco total + explosión de partículas
+      110 – 220  : expansión, partículas se alejan, ondas de choque
+      220 – 320  : partículas se enfrían, cambian de color, forman estrellas
+      320 – 420  : aparecen brazos de galaxia condensándose desde el centro
+      420 – 500  : todo se estabiliza, título aparece, barra se llena
+      500 – 560  : fade out
+  */
+
+  /* singularidad */
+  var singR = 0;
+
+  /* ondas de choque */
+  var shockwaves = [];
+  function addShock(r, spd, col, w){
+    shockwaves.push({ r:r, spd:spd, col:col, w:w, al:1 });
+  }
+
+  /* partículas del Big Bang — colores rojo/ámbar/naranja */
+  var BANG_PTS = [];
+  (function(){
+    for(var i = 0; i < 500; i++){
+      var ang = irand(0, Math.PI*2);
+      var spd = irand(1, 14);
+      BANG_PTS.push({
+        x: 0, y: 0,
+        vx: Math.cos(ang)*spd,
+        vy: Math.sin(ang)*spd,
+        r:  irand(0.8, 3.5),
+        hue: irand(0, 50),   /* rojo → naranja → ámbar */
+        al: 1,
+        decay: irand(0.004, 0.012),
+        trail: []
+      });
+    }
+  })();
+  var bangFired = false;
+
+  /* partículas de galaxia (se forman después) */
+  var GAL_PTS = [];
+  (function(){
+    for(var arm = 0; arm < 4; arm++){
+      var aOff = (arm/4)*Math.PI*2;
+      for(var p = 0; p < 280; p++){
+        var t = Math.pow(Math.random(), 0.6);
+        var gr = 20 + t * Math.min(IW, IH) * 0.35;
+        var ga = aOff + t * 4.5 + irand(-0.3, 0.3);
+        GAL_PTS.push({
+          tx: IW/2 + Math.cos(ga)*gr,
+          ty: IH/2 + Math.sin(ga)*gr * 0.45,
+          x:  IW/2, y: IH/2,
+          r:  irand(0.5, 2.2),
+          hue: t < 0.3 ? irand(0,20) : t < 0.6 ? irand(20,50) : irand(80,140), /* rojo→ámbar→verde */
+          al: (0.5 + Math.random()*0.5) * (1 - t*0.3),
+          born: 320 + Math.floor(t * 60 + irand(0, 40)),   /* frame en que nace */
+          rotSpd: irand(0.002, 0.006) * (arm%2===0 ? 1 : -1),
+          angle: ga, dist: gr * 0.45, spread: Math.sin(ga)*gr * 0.45
+        });
+      }
+    }
+    /* núcleo */
+    for(var c = 0; c < 120; c++){
+      var cr = Math.pow(Math.random(), 0.4) * Math.min(IW,IH) * 0.06;
+      var ca = irand(0, Math.PI*2);
+      GAL_PTS.push({
+        tx: IW/2 + Math.cos(ca)*cr, ty: IH/2 + Math.sin(ca)*cr*0.45,
+        x: IW/2, y: IH/2,
+        r: irand(0.6, 2.5),
+        hue: irand(30, 60), al: 0.7 + Math.random()*0.3,
+        born: 320, rotSpd: 0, angle: ca, dist: cr*0.45, spread: 0
+      });
+    }
+  })();
+
+  /* texto / fases */
+  var phaseEl = document.getElementById('intro-phase');
+  var titleEl = document.getElementById('intro-title');
+  var barWrap = document.getElementById('intro-bar-wrap');
+  var barEl   = document.getElementById('intro-bar');
+  var lastPhase = '';
+  var phaseTimeout = null;
+
+  function setPhase(txt){
+    if(txt === lastPhase) return;
+    lastPhase = txt;
+    /* cancelar cualquier cambio pendiente antes de lanzar uno nuevo */
+    if(phaseTimeout) { clearTimeout(phaseTimeout); phaseTimeout = null; }
+    phaseEl.classList.remove('visible');
+    phaseTimeout = setTimeout(function(){
+      phaseEl.textContent = txt;
+      phaseEl.classList.add('visible');
+      phaseTimeout = null;
+    }, 350);
+  }
+
+  function introRender(){
+    if(introDone) return;
+    introFrame++;
+    var f = introFrame;
+
+    ictx.clearRect(0, 0, IW, IH);
+
+    /* ── fondo negro ── */
+    ictx.fillStyle = '#000';
+    ictx.fillRect(0, 0, IW, IH);
+
+    /* ─────────────────────────────────
+       FASE 1 (0-40): singularidad
+    ───────────────────────────────── */
+    if(f < 40){
+      setPhase('Antes del caos...');
+      var prog1 = f / 40;
+      singR = prog1 * prog1 * 6;
+      var sg = ictx.createRadialGradient(IW/2, IH/2, 0, IW/2, IH/2, singR * 6);
+      sg.addColorStop(0, 'rgba(255,255,255,1)');
+      sg.addColorStop(0.3, 'rgba(255,100,50,0.8)');
+      sg.addColorStop(1, 'rgba(0,0,0,0)');
+      ictx.fillStyle = sg;
+      ictx.beginPath();
+      ictx.arc(IW/2, IH/2, singR * 6, 0, Math.PI*2);
+      ictx.fill();
+    }
+
+    /* ─────────────────────────────────
+       FASE 2 (40-80): singularidad crece
+    ───────────────────────────────── */
+    if(f >= 40 && f < 80){
+      setPhase('El mundo se quiebra...');
+      var prog2 = (f-40) / 40;
+      singR = 6 + prog2 * 14 + Math.sin(f * 0.4) * 3;
+      var sg2 = ictx.createRadialGradient(IW/2, IH/2, 0, IW/2, IH/2, singR * 3);
+      sg2.addColorStop(0, 'rgba(255,255,255,1)');
+      sg2.addColorStop(0.2, 'rgba(255,80,20,0.9)');
+      sg2.addColorStop(0.6, 'rgba(150,20,0,0.4)');
+      sg2.addColorStop(1, 'rgba(0,0,0,0)');
+      ictx.fillStyle = sg2;
+      ictx.beginPath();
+      ictx.arc(IW/2, IH/2, singR * 3, 0, Math.PI*2);
+      ictx.fill();
+      ictx.beginPath();
+      ictx.arc(IW/2, IH/2, singR, 0, Math.PI*2);
+      ictx.fillStyle = 'rgba(255,255,255,1)';
+      ictx.fill();
+    }
+
+    /* ─────────────────────────────────
+       FASE 3 (80-110): BIG BANG
+    ───────────────────────────────── */
+    if(f === 80 && !bangFired){
+      bangFired = true;
+      addShock(0, 18, '255,80,20',  20);
+      addShock(0, 11, '200,40,0',   12);
+      addShock(0, 7,  '212,160,23', 7);
+      addShock(0, 5,  '255,160,0',  5);
+      for(var bp = 0; bp < BANG_PTS.length; bp++){
+        BANG_PTS[bp].x = IW/2;
+        BANG_PTS[bp].y = IH/2;
+        BANG_PTS[bp].al = 1;
+      }
+    }
+    if(f >= 80 && f < 110){
+      setPhase('¡Todo colapsa!');
+      var flashA = Math.max(0, 1 - (f-80)/20);
+      ictx.fillStyle = 'rgba(255,80,20,' + flashA + ')';
+      ictx.fillRect(0, 0, IW, IH);
+    }
+
+    /* ─────────────────────────────────
+       FASE 4 (110-320): expansión
+    ───────────────────────────────── */
+    if(f >= 80 && f < 320){
+      if(f >= 110) setPhase('Los monstruos despiertan...');
+
+      /* ondas de choque */
+      for(var si = shockwaves.length - 1; si >= 0; si--){
+        var sw = shockwaves[si];
+        sw.r += sw.spd;
+        sw.al = Math.max(0, sw.al - 0.007);
+        if(sw.al <= 0){ shockwaves.splice(si,1); continue; }
+        ictx.beginPath();
+        ictx.arc(IW/2, IH/2, sw.r, 0, Math.PI*2);
+        ictx.strokeStyle = 'rgba(' + sw.col + ',' + sw.al + ')';
+        ictx.lineWidth = sw.w * sw.al;
+        ictx.stroke();
+      }
+
+      /* partículas */
+      for(var bi = 0; bi < BANG_PTS.length; bi++){
+        var bp2 = BANG_PTS[bi];
+        /* ralentizar con el tiempo */
+        var friction = f < 150 ? 1 : (1 - (f-150)/800);
+        bp2.vx *= (0.992 + friction*0.002);
+        bp2.vy *= (0.992 + friction*0.002);
+        bp2.x += bp2.vx;
+        bp2.y += bp2.vy;
+        bp2.al = Math.max(0, bp2.al - bp2.decay * (f > 200 ? 1.5 : 0.5));
+        /* trail */
+        bp2.trail.push({ x: bp2.x, y: bp2.y });
+        if(bp2.trail.length > 6) bp2.trail.shift();
+
+        /* dibujar trail */
+        for(var tr = 1; tr < bp2.trail.length; tr++){
+          var trAl = (tr / bp2.trail.length) * bp2.al * 0.5;
+          ictx.beginPath();
+          ictx.moveTo(bp2.trail[tr-1].x, bp2.trail[tr-1].y);
+          ictx.lineTo(bp2.trail[tr].x,   bp2.trail[tr].y);
+          ictx.strokeStyle = 'hsla(' + bp2.hue + ',90%,70%,' + trAl + ')';
+          ictx.lineWidth = bp2.r * 0.8;
+          ictx.stroke();
+        }
+
+        if(bp2.al <= 0) continue;
+        ictx.beginPath();
+        ictx.arc(bp2.x, bp2.y, bp2.r, 0, Math.PI*2);
+        ictx.fillStyle = 'hsla(' + bp2.hue + ',90%,75%,' + bp2.al + ')';
+        ictx.fill();
+      }
+
+      /* halo central residual */
+      var haloA = Math.max(0, 0.6 - (f-80)/300);
+      if(haloA > 0){
+        var hg = ictx.createRadialGradient(IW/2, IH/2, 0, IW/2, IH/2, 160);
+        hg.addColorStop(0, 'rgba(255,120,30,' + haloA + ')');
+        hg.addColorStop(0.4, 'rgba(192,57,43,' + (haloA*0.4) + ')');
+        hg.addColorStop(1, 'rgba(0,0,0,0)');
+        ictx.fillStyle = hg;
+        ictx.fillRect(0, 0, IW, IH);
+      }
+    }
+
+    /* ─────────────────────────────────
+       FASE 5 (220-420): galaxia se forma
+    ───────────────────────────────── */
+    if(f >= 220){
+      if(f < 320) setPhase('Los supervivientes resisten...');
+      else if(f < 420) setPhase('Un nuevo mundo emerge...');
+
+      /* rotar la galaxia y moverla hacia posición */
+      var galProgress = Math.min(1, (f - 320) / 100);
+
+      for(var gi = 0; gi < GAL_PTS.length; gi++){
+        var gp = GAL_PTS[gi];
+        if(f < gp.born) continue;
+
+        var localF = f - gp.born;
+        var appear = Math.min(1, localF / 60);
+
+        /* rotación lenta */
+        gp.angle += gp.rotSpd;
+        var maxDist = Math.min(IW, IH) * 0.35;
+        gp.tx = IW/2 + Math.cos(gp.angle) * gp.dist * (maxDist / (gp.dist || 1)) * (gp.dist > 0 ? 1 : 0);
+        /* simplificado: mantener posición objetivo */
+
+        var ax = gp.tx - gp.x, ay = gp.ty - gp.y;
+        gp.x += ax * 0.06;
+        gp.y += ay * 0.06;
+
+        var drawAl = gp.al * appear;
+        if(drawAl < 0.02) continue;
+
+        ictx.beginPath();
+        ictx.arc(gp.x, gp.y, gp.r, 0, Math.PI*2);
+        ictx.fillStyle = 'hsla(' + gp.hue + ',85%,55%,' + drawAl + ')';
+        ictx.fill();
+      }
+
+      /* halo galáctico */
+      if(f >= 320){
+        var gHaloA = Math.min(0.35, (f-320)/200 * 0.35);
+        var gg = ictx.createRadialGradient(IW/2, IH/2, 0, IW/2, IH/2, Math.min(IW,IH)*0.25);
+        gg.addColorStop(0, 'rgba(255,120,30,' + (gHaloA*1.5) + ')');
+        gg.addColorStop(0.4,'rgba(192,57,43,' + gHaloA + ')');
+        gg.addColorStop(1, 'rgba(0,0,0,0)');
+        ictx.fillStyle = gg;
+        ictx.fillRect(0, 0, IW, IH);
+      }
+    }
+
+    /* ─────────────────────────────────
+       FASE 6 (420-500): título + barra
+    ───────────────────────────────── */
+    if(f === 420){
+      setPhase('Y en medio del caos... te encontré');
+      titleEl.classList.add('visible');
+      barWrap.classList.add('visible');
+    }
+    if(f >= 420 && f < 500){
+      var prog6 = (f - 420) / 80;
+      barEl.style.width = (prog6 * 100) + '%';
+    }
+
+    /* ─────────────────────────────────
+       FASE 7 (500-560): fade out
+    ───────────────────────────────── */
+    if(f === 500){
+      setPhase('');
+      phaseEl.classList.remove('visible');
+      titleEl.classList.remove('visible');
+      barWrap.classList.remove('visible');
+    }
+    if(f >= 500 && f < 560){
+      var fadeA = (f - 500) / 60;
+      ictx.fillStyle = 'rgba(0,0,0,' + fadeA + ')';
+      ictx.fillRect(0, 0, IW, IH);
+    }
+
+    /* ─────────────────────────────────
+       FIN: mostrar universo 3D
+    ───────────────────────────────── */
+    if(f >= 560){
+      introDone = true;
+      var introScreen = document.getElementById('intro-screen');
+      introScreen.classList.add('fadeout');
+      setTimeout(function(){
+        introScreen.style.display = 'none';
+        /* activar universo 3D */
+        gameStarted = true;
+        /* mostrar cita de Sweet Home después de 2 segundos */
+        setTimeout(function(){
+          var CITAS_SH = [
+            { txt: '"Ser humano significa luchar para seguir siéndolo."', ep: '— Sweet Home, Ep. 1' },
+            { txt: '"No importa cuánto tiempo quede. Quiero vivir como humano."', ep: '— Cha Hyun-su' },
+            { txt: '"Incluso los monstruos tienen algo que proteger."', ep: '— Sweet Home, Temporada 1' }
+          ];
+          var cita = CITAS_SH[Math.floor(Math.random() * CITAS_SH.length)];
+          var citaEl    = document.getElementById('cita-sh');
+          var citaTxt   = document.getElementById('cita-texto');
+          var citaFuent = document.getElementById('cita-fuente');
+          citaTxt.textContent   = cita.txt;
+          citaFuent.textContent = cita.ep;
+          citaEl.classList.add('visible');
+          /* desvanece tras 6s */
+          setTimeout(function(){ citaEl.classList.remove('visible'); }, 6000);
+        }, 2000);
+        /* música */
+        var aud = document.getElementById('audio');
+        aud.volume = 0.6;
+        aud.play().then(function(){
+          var btnM = document.getElementById('btn-musica');
+          if(btnM){ btnM.classList.add('playing'); btnM.textContent = '🎵'; }
+        }).catch(function(){});
+      }, 1000);
+      return;
+    }
+
+    requestAnimationFrame(introRender);
+  }
+
+  /* NO se auto-ejecuta — se llama desde el botón */
+  window.startIntroAnimation = function(){ introFrame = 0; introDone = false; introRender(); };
+})();
+/* ────────────────────────────────
+   ESTRELLAS FLOTANTES DEL MODAL
+──────────────────────────────── */
+(function(){
+  var cont = document.getElementById('floating-stars');
+  for(var i = 0; i < 80; i++){
+    var s = document.createElement('span');
+    var size = Math.random() * 3 + 1;
+    s.style.cssText = [
+      'left:' + (Math.random()*100) + '%',
+      'top:' + (Math.random()*100) + '%',
+      'width:' + size + 'px',
+      'height:' + size + 'px',
+      'animation-duration:' + (3+Math.random()*8) + 's',
+      'animation-delay:' + (Math.random()*5) + 's',
+      'animation-name:twinkleFloat',
+      'opacity:0'
+    ].join(';');
+    cont.appendChild(s);
+  }
+  var style = document.createElement('style');
+  style.textContent = '@keyframes twinkleFloat{0%{opacity:0;transform:translateY(0)}20%{opacity:' +
+    '.9}80%{opacity:.3}100%{opacity:0;transform:translateY(-60px)}}';
+  document.head.appendChild(style);
+})();
+
+/* ────────────────────────────────
+   CANVAS SETUP
+──────────────────────────────── */
+var cv  = document.getElementById('cv');
+var ctx = cv.getContext('2d');
+var W = 0, H = 0;
+function resize(){
+  W = cv.width  = window.innerWidth;
+  H = cv.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+function easeOut(t){ return t >= 1 ? 1 : 1 - Math.pow(2, -10*t); }
+function rand(a, b){ return a + Math.random()*(b-a); }
+function randInt(a, b){ return Math.floor(rand(a, b)); }
+
+/* ────────────────────────────────
+   CÁMARA
+──────────────────────────────── */
+var cam = { rotX: 1.0, rotY: 0, zoom: 1.6 };
+var MIN_Z = 0.2, MAX_Z = 4.5;
+var velX = 0, velY = 0;
+var isDrag = false, lastMX = 0, lastMY = 0, rafId = 0;
+var FOCAL = 900;
+
+function project(x, y, z){
+  var cy = Math.cos(cam.rotY), sy = Math.sin(cam.rotY);
+  var x1 = x*cy + z*sy, z1 = -x*sy + z*cy;
+  var cx = Math.cos(cam.rotX), sx = Math.sin(cam.rotX);
+  var y2 = y*cx - z1*sx, z2 = y*sx + z1*cx;
+  var sc = cam.zoom * FOCAL / (FOCAL + z2 + 600);
+  return { sx: W/2 + x1*sc, sy: H/2 + y2*sc, scale: sc, z: z2 };
+}
+
+/* ────────────────────────────────
+   BANG / INTRO
+──────────────────────────────── */
+var bangFrame = 0, BANG_DUR = 120, bang = 0, flashAlpha = 1;
+var gameStarted = false;
+
+/* ────────────────────────────────
+   ESTRELLAS DE FONDO
+──────────────────────────────── */
+var STARS = [];
+for(var i = 0; i < 900; i++){
+  var th = rand(0, Math.PI*2), ph = Math.acos(2*Math.random()-1);
+  var rr = rand(1000, 2000);
+  STARS.push({
+    x: rr*Math.sin(ph)*Math.cos(th),
+    y: rr*Math.sin(ph)*Math.sin(th),
+    z: rr*Math.cos(ph),
+    r: rand(0.2, 1.5),
+    a: Math.random(),
+    s: (rand(0.002, 0.007)) * (Math.random() < 0.5 ? 1 : -1),
+    color: Math.random() < 0.12 ? 'purple' : (Math.random() < 0.08 ? 'blue' : 'white')
+  });
+}
+
+/* ────────────────────────────────
+   NEBULOSAS — paleta Sweet Home: rojo, ámbar, verde militar
+──────────────────────────────── */
+var NEBULAS = [];
+var nebulaColors = [
+  ['192,57,43', '100,10,10'],   /* rojo sangre */
+  ['212,160,23','100,70,0'],    /* ámbar */
+  ['30,100,50', '10,50,20'],    /* verde militar */
+  ['150,30,20', '70,0,0'],      /* granate */
+  ['180,100,0', '80,40,0'],     /* naranja quemado */
+];
+for(var n = 0; n < 7; n++){
+  var na = rand(0, Math.PI*2), nr = rand(400, 950);
+  var nc = nebulaColors[n % nebulaColors.length];
+  NEBULAS.push({
+    x: Math.cos(na)*nr + rand(-80,80),
+    y: rand(-120, 120),
+    z: Math.sin(na)*nr + rand(-80,80),
+    rx: rand(120, 280), ry: rand(80, 200),
+    c1: nc[0], c2: nc[1],
+    al: rand(0.05, 0.15),
+    phase: rand(0, Math.PI*2),
+    speed: rand(0.004, 0.01)
+  });
+}
+
+/* ────────────────────────────────
+   GALAXIA ESPIRAL PRINCIPAL (grande)
+──────────────────────────────── */
+var GALAXY = [];
+var G_ARMS = 4, G_PTS = 1000, G_CORE = 600;
+
+for(var arm = 0; arm < G_ARMS; arm++){
+  var aOff = (arm / G_ARMS) * Math.PI * 2;
+  for(var p = 0; p < G_PTS; p++){
+    var t = Math.pow(Math.random(), 0.55);
+    var gr = 120 + t * 1200;
+    var ga = aOff + t * 4.8 + rand(-0.5, 0.5) * (0.2 + t * 0.6);
+    var gx = Math.cos(ga)*gr + rand(-1,1)*gr*0.09;
+    var gz = Math.sin(ga)*gr + rand(-1,1)*gr*0.09;
+    var gy = rand(-1,1) * (5 + t*20);
+
+    var gh, gs, gl;
+    /* núcleo: ámbar/naranja; brazos medios: rojo/granate; bordes: verde oscuro */
+    if(t < 0.15){ gh = rand(30,50);  gs = 90; gl = rand(75,92); }
+    else if(t < 0.4){ gh = rand(0,20); gs = rand(75,100); gl = rand(45,65); }
+    else { gh = rand(100,140); gs = rand(50,80); gl = rand(25,50); }
+
+    var isNode = Math.random() < 0.04;
+    if(isNode){ gh = rand(0,15); gs = 100; gl = rand(60,80); } /* nodos: rojo brillante */
+
+    GALAXY.push({
+      px: gx, py: gy, pz: gz,
+      r: isNode ? rand(1.5,3) : rand(0.3,1.3),
+      hue: gh, sat: gs, lit: gl,
+      al: (0.5 + Math.random()*0.5) * (1 - t*0.2),
+      speed: (0.00012 + (1-t)*0.0004) * rand(0.7, 1.3),
+      bobPh: rand(0,Math.PI*2), bobSpd: rand(0.003,0.012), bobAmp: rand(0.5,2.5)
+    });
+  }
+}
+for(var c = 0; c < G_CORE; c++){
+  var cr = Math.pow(Math.random(), 0.4) * 110, ca = rand(0, Math.PI*2);
+  GALAXY.push({
+    px: Math.cos(ca)*cr, py: rand(-35,35), pz: Math.sin(ca)*cr,
+    r: rand(0.4, 1.8),
+    hue: rand(25,45), sat: rand(70,100), lit: rand(70,90), /* ámbar brillante en el núcleo */
+    al: 0.6 + Math.random()*0.4,
+    speed: 0.0003 + Math.random()*0.0003,
+    bobPh: rand(0,Math.PI*2), bobSpd: 0.01, bobAmp: 0.8
+  });
+}
+
+var galaxyAngle = 0;
+
+/* ── Planetas con paleta Sweet Home ── */
+var PLANETS = [
+  {
+    orbitR: 280, orbitTilt: 0.25, orbitSpeed: 0.0007, angle: 0,
+    r: 22, color: '#8b1a1a', glow: '#c0392b',   /* rojo sangre */
+    ringColor: 'rgba(192,57,43,0.3)', hasRing: true,
+    moonR: 6, moonOrbit: 38, moonAngle: 0, moonSpeed: 0.004
+  },
+  {
+    orbitR: 500, orbitTilt: -0.18, orbitSpeed: 0.0004, angle: 2.1,
+    r: 16, color: '#b8860b', glow: '#d4a017',   /* ámbar */
+    ringColor: null, hasRing: false,
+    moonR: 5, moonOrbit: 30, moonAngle: 1, moonSpeed: 0.006
+  },
+  {
+    orbitR: 750, orbitTilt: 0.35, orbitSpeed: 0.00025, angle: 4.2,
+    r: 30, color: '#1a4a2a', glow: '#2e7d52',   /* verde militar */
+    ringColor: 'rgba(46,125,82,0.25)', hasRing: true,
+    moonR: 7, moonOrbit: 48, moonAngle: 3, moonSpeed: 0.003
+  },
+  {
+    orbitR: 950, orbitTilt: -0.28, orbitSpeed: 0.00015, angle: 1.0,
+    r: 14, color: '#3a1a08', glow: '#8b4513',   /* marrón tierra */
+    ringColor: null, hasRing: false,
+    moonR: 0, moonOrbit: 0, moonAngle: 0, moonSpeed: 0
+  }
+];
+
+/* ────────────────────────────────
+   COMETAS
+──────────────────────────────── */
+var COMETS = [];
+function spawnComet(){
+  var edge = Math.random() < 0.5;
+  return {
+    x: edge ? rand(-2000, 2000) : (Math.random()<0.5 ? -2000 : 2000),
+    y: rand(-800, 800),
+    z: edge ? (Math.random()<0.5 ? -2000 : 2000) : rand(-2000, 2000),
+    vx: rand(-4, 4), vy: rand(-1, 1), vz: rand(-4, 4),
+    life: 0, maxLife: randInt(180, 350),
+    hue: rand(200, 320), r: rand(1.5, 3),
+    tailLen: randInt(12, 22)
+  };
+}
+for(var ci = 0; ci < 4; ci++) COMETS.push(spawnComet());
+
+/* ────────────────────────────────
+   PARTÍCULAS DE POLVO — tonos ámbar/verde
+──────────────────────────────── */
+var DUST = [];
+for(var di = 0; di < 200; di++){
+  var da = rand(0, Math.PI*2), dr = rand(200, 1100);
+  DUST.push({
+    x: Math.cos(da)*dr, y: rand(-150,150), z: Math.sin(da)*dr,
+    r: rand(0.3, 1.1),
+    hue: Math.random() < 0.5 ? rand(20,50) : rand(100,140), /* ámbar o verde */
+    al: rand(0.3, 0.8),
+    phase: rand(0, Math.PI*2), speed: rand(0.005, 0.02)
+  });
+}
+
+/* ────────────────────────────────
+   FRASES FLOTANTES
+──────────────────────────────── */
+var FRASES = [
+  "Ser humano es luchar 🖤",
+  "Tu hogar está donde tú estás �️",
+  "Eres mi lugar seguro ⚔️",
+  "Incluso en el caos, brillas 🔥",
+  "Mi favorita del Sweet Home ❤️",
+  "Nunca te rindes, nunca 🌑",
+  "La mejor superviviente 💪",
+  "Contigo, el mundo vale la pena 🌿"
+];
+var FRASE_ITEMS = [];
+for(var fi = 0; fi < FRASES.length; fi++){
+  var fa = (fi / FRASES.length) * Math.PI * 2 + rand(0, 0.4);
+  var fr = rand(320, 820);
+  FRASE_ITEMS.push({
+    txt: FRASES[fi],
+    px: Math.cos(fa)*fr, py: rand(-20, 20), pz: Math.sin(fa)*fr,
+    fontSize: rand(1.2, 1.8),
+    bobPh: rand(0, Math.PI*2), bobSpd: rand(0.008, 0.018), bobAmp: rand(6, 14)
+  });
+}
+
+/* ────────────────────────────────
+   CONSTELACIONES
+──────────────────────────────── */
+var CONSTELLATIONS = [];
+(function(){
+  /* Orión simplificado */
+  var orionR = 650, orionAng = 0.8;
+  var oPts = [
+    { x: Math.cos(orionAng)*orionR,       y: -60,  z: Math.sin(orionAng)*orionR },
+    { x: Math.cos(orionAng+0.15)*orionR,  y: -40,  z: Math.sin(orionAng+0.15)*orionR },
+    { x: Math.cos(orionAng+0.05)*(orionR-30), y: -10, z: Math.sin(orionAng+0.05)*(orionR-30) },
+    { x: Math.cos(orionAng+0.1)*(orionR-30),  y:  10, z: Math.sin(orionAng+0.1)*(orionR-30) },
+    { x: Math.cos(orionAng-0.05)*orionR,  y:  40,  z: Math.sin(orionAng-0.05)*orionR },
+    { x: Math.cos(orionAng+0.2)*orionR,   y:  40,  z: Math.sin(orionAng+0.2)*orionR },
+    { x: Math.cos(orionAng+0.08)*(orionR+20), y: 65, z: Math.sin(orionAng+0.08)*(orionR+20) }
+  ];
+  CONSTELLATIONS.push({ pts: oPts, lines: [[0,1],[0,2],[1,3],[2,3],[3,4],[3,5],[4,6],[5,6]] });
+
+  /* Osa Mayor simplificada */
+  var uzR = 720, uzAng = 2.5;
+  var uzPts = [
+    { x: Math.cos(uzAng)*uzR,         y: 30,  z: Math.sin(uzAng)*uzR },
+    { x: Math.cos(uzAng+0.12)*uzR,    y: 20,  z: Math.sin(uzAng+0.12)*uzR },
+    { x: Math.cos(uzAng+0.22)*uzR,    y: 25,  z: Math.sin(uzAng+0.22)*uzR },
+    { x: Math.cos(uzAng+0.32)*uzR,    y: 15,  z: Math.sin(uzAng+0.32)*uzR },
+    { x: Math.cos(uzAng+0.40)*(uzR-40), y: 0, z: Math.sin(uzAng+0.40)*(uzR-40) },
+    { x: Math.cos(uzAng+0.50)*(uzR-60), y:-15, z: Math.sin(uzAng+0.50)*(uzR-60) },
+    { x: Math.cos(uzAng+0.58)*(uzR-40), y:-30, z: Math.sin(uzAng+0.58)*(uzR-40) }
+  ];
+  CONSTELLATIONS.push({ pts: uzPts, lines: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6]] });
+
+  /* Cruz del Sur */
+  var csR = 580, csAng = 4.8;
+  var csPts = [
+    { x: Math.cos(csAng)*csR,          y: -45, z: Math.sin(csAng)*csR },
+    { x: Math.cos(csAng+0.18)*csR,     y:   0, z: Math.sin(csAng+0.18)*csR },
+    { x: Math.cos(csAng+0.36)*csR,     y:  45, z: Math.sin(csAng+0.36)*csR },
+    { x: Math.cos(csAng+0.08)*(csR-50),y:  20, z: Math.sin(csAng+0.08)*(csR-50) },
+    { x: Math.cos(csAng+0.28)*(csR+50),y:  20, z: Math.sin(csAng+0.28)*(csR+50) }
+  ];
+  CONSTELLATIONS.push({ pts: csPts, lines: [[0,1],[1,2],[3,4]] });
+})();
+
+/* ────────────────────────────────
+   LLUVIA DE METEOROS
+──────────────────────────────── */
+var METEORS = [];
+var lastMeteorShower = 0;
+var METEOR_INTERVAL  = 8000; /* cada 8 segundos */
+function spawnMeteor(){
+  /* todos en la misma dirección para dar efecto de lluvia */
+  var baseAng = rand(0.4, 0.9); /* diagonal */
+  var spd = rand(8, 18);
+  var startX = rand(0, W);
+  var startY = rand(-100, H * 0.3);
+  return {
+    x: startX, y: startY,
+    vx: Math.cos(baseAng) * spd,
+    vy: Math.sin(baseAng) * spd,
+    hue: rand(0, 40),   /* rojo → ámbar */
+    r: rand(1, 2.5),
+    tailLen: randInt(14, 28),
+    life: 0, maxLife: randInt(40, 80)
+  };
+}
+
+/* ────────────────────────────────
+   PARTÍCULAS DE CLIC
+──────────────────────────────── */
+var CLICK_PARTICLES = [];
+function spawnClickBurst(x, y){
+  for(var i2 = 0; i2 < 18; i2++){
+    var ang3 = (i2 / 18) * Math.PI * 2 + rand(-0.3, 0.3);
+    var spd2 = rand(1.5, 6);
+    CLICK_PARTICLES.push({
+      x: x, y: y,
+      vx: Math.cos(ang3) * spd2,
+      vy: Math.sin(ang3) * spd2,
+      hue: rand(0, 50),   /* rojo → ámbar */
+      r: rand(2, 5),
+      life: 0, maxLife: randInt(40, 70)
+    });
+  }
+}
+
+/* ────────────────────────────────
+   CONSTELACIÓN DE INICIALES
+   Letra "A" — cámbiala a la inicial de tu amiga
+──────────────────────────────── */
+var showInitials    = false;
+var initialsShowTime = 0;
+var INITIALS_PTS  = [];
+var INITIALS_LINES = [];
+(function(){
+  /* dibuja la letra "A" en coordenadas 3D alrededor del centro */
+  var sc2 = 200, iR = 300, iAng = 5.5;
+  var cx2 = Math.cos(iAng) * iR, cz2 = Math.sin(iAng) * iR;
+  /* puntos de la A */
+  var raw = [
+    [-0.5, -1], [0, 1], [0.5, -1],  /* triángulo */
+    [-0.2, 0],  [0.2, 0]             /* barra horizontal */
+  ];
+  for(var ri = 0; ri < raw.length; ri++){
+    INITIALS_PTS.push({
+      x: cx2 + raw[ri][0] * sc2,
+      y: raw[ri][1] * sc2 * -0.8,
+      z: cz2 + raw[ri][0] * sc2 * 0.1
+    });
+  }
+  INITIALS_LINES = [[0,1],[1,2],[3,4]];
+})();
+
+/* ────────────────────────────────
+   RENDERIZADO
+──────────────────────────────── */
+var t = 0;
+
+function drawPlanet(pl){
+  /* posición en órbita */
+  pl.angle += pl.orbitSpeed;
+  if(pl.moonR > 0) pl.moonAngle += pl.moonSpeed;
+
+  var ox = Math.cos(pl.angle) * pl.orbitR;
+  var oz = Math.sin(pl.angle) * pl.orbitR;
+  var oy = Math.sin(pl.angle) * pl.orbitR * Math.sin(pl.orbitTilt);
+
+  var pr = project(ox * bang, oy * bang, oz * bang);
+  if(pr.scale <= 0) return;
+
+  var sc = pr.scale;
+  var pr_r = pl.r * sc * 2;
+
+  /* órbita (línea) */
+  ctx.save();
+  ctx.strokeStyle = 'rgba(192,57,43,0.12)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  /* dibujar elipse de órbita aproximada */
+  ctx.setLineDash([4,8]);
+  ctx.ellipse(W/2, H/2, pl.orbitR * sc * 2, pl.orbitR * sc * 1.2, 0, 0, Math.PI*2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  /* glow del planeta */
+  var grd = ctx.createRadialGradient(pr.sx, pr.sy, 0, pr.sx, pr.sy, pr_r * 2.5);
+  grd.addColorStop(0, pl.glow + 'cc');
+  grd.addColorStop(0.4, pl.glow + '55');
+  grd.addColorStop(1, 'transparent');
+  ctx.fillStyle = grd;
+  ctx.beginPath();
+  ctx.arc(pr.sx, pr.sy, pr_r * 2.5, 0, Math.PI*2);
+  ctx.fill();
+
+  /* planeta */
+  var pg = ctx.createRadialGradient(pr.sx - pr_r*0.3, pr.sy - pr_r*0.3, 0, pr.sx, pr.sy, pr_r);
+  pg.addColorStop(0, '#fff');
+  pg.addColorStop(0.3, pl.color);
+  pg.addColorStop(1, pl.glow);
+  ctx.beginPath();
+  ctx.arc(pr.sx, pr.sy, pr_r, 0, Math.PI*2);
+  ctx.fillStyle = pg;
+  ctx.fill();
+
+  /* anillo */
+  if(pl.hasRing && pr_r > 4){
+    ctx.save();
+    ctx.translate(pr.sx, pr.sy);
+    ctx.scale(1, 0.35);
+    ctx.beginPath();
+    ctx.arc(0, 0, pr_r * 2.2, 0, Math.PI*2);
+    ctx.arc(0, 0, pr_r * 1.3, 0, Math.PI*2, true);
+    ctx.fillStyle = pl.ringColor;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /* luna */
+  if(pl.moonR > 0){
+    var mx = ox + Math.cos(pl.moonAngle) * pl.moonOrbit;
+    var my = oy + Math.sin(pl.moonAngle) * pl.moonOrbit * 0.5;
+    var mz = oz + Math.sin(pl.moonAngle) * pl.moonOrbit;
+    var mpr = project(mx * bang, my * bang, mz * bang);
+    if(mpr.scale > 0){
+      ctx.beginPath();
+      ctx.arc(mpr.sx, mpr.sy, pl.moonR * mpr.scale * 2, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(230,200,255,0.85)';
+      ctx.fill();
+    }
+  }
+}
+
+function render(){
+  ctx.clearRect(0, 0, W, H);
+  t++;
+
+  /* avanzar bang */
+  if(gameStarted && bangFrame < BANG_DUR) bangFrame++;
+  bang       = easeOut(bangFrame / BANG_DUR);
+  flashAlpha = Math.max(0, 1 - bangFrame / 20);
+
+  /* fondo degradado — oscuro/verde military */
+  var bg = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.max(W,H)*0.85);
+  bg.addColorStop(0,   '#0d1a0f');
+  bg.addColorStop(0.4, '#060d07');
+  bg.addColorStop(1,   '#020504');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  /* avanzar galaxia */
+  galaxyAngle += 0.00025;
+
+  /* ── ESTRELLAS ── */
+  for(var si = 0; si < STARS.length; si++){
+    var st = STARS[si];
+    st.a += st.s; if(st.a > 1 || st.a < 0) st.s *= -1;
+    var sp = project(st.x, st.y, st.z);
+    if(sp.scale <= 0) continue;
+    ctx.beginPath();
+    ctx.arc(sp.sx, sp.sy, st.r * Math.min(sp.scale*2, 1.5), 0, Math.PI*2);
+    var col = st.color === 'purple' ? 'rgba(220,100,80,' :
+              st.color === 'blue'   ? 'rgba(100,180,120,' : 'rgba(255,240,200,';
+    ctx.fillStyle = col + st.a + ')';
+    ctx.fill();
+  }
+
+  /* ── FLASH INTRO ── */
+  if(flashAlpha > 0){
+    ctx.fillStyle = 'rgba(192,57,43,' + flashAlpha + ')';
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  /* ── HALO CENTRAL ── */
+  var ctr = project(0, 0, 0);
+  var halo = ctx.createRadialGradient(ctr.sx, ctr.sy, 0, ctr.sx, ctr.sy, 220 * cam.zoom * bang);
+  halo.addColorStop(0,   'rgba(255,150,50,0.45)');
+  halo.addColorStop(0.2, 'rgba(192,57,43,0.2)');
+  halo.addColorStop(0.55,'rgba(80,20,0,0.08)');
+  halo.addColorStop(1,   'rgba(0,0,0,0)');
+  ctx.fillStyle = halo;
+  ctx.fillRect(0, 0, W, H);
+
+  /* ── NEBULOSAS ── */
+  for(var ni = 0; ni < NEBULAS.length; ni++){
+    var nb = NEBULAS[ni];
+    nb.phase += nb.speed;
+    var nbPulse = 0.8 + 0.2 * Math.sin(nb.phase);
+    var nbp = project(nb.x * bang, nb.y * bang, nb.z * bang);
+    if(nbp.scale <= 0) continue;
+    var nRx = nb.rx * nbp.scale * 2 * nbPulse;
+    var nRy = nb.ry * nbp.scale * 2 * nbPulse;
+    if(nRx < 2) continue;
+    var ng = ctx.createRadialGradient(nbp.sx, nbp.sy, 0, nbp.sx, nbp.sy, nRx);
+    ng.addColorStop(0,   'rgba(' + nb.c1 + ',' + (nb.al * bang * nbPulse) + ')');
+    ng.addColorStop(0.5, 'rgba(' + nb.c2 + ',' + (nb.al * 0.5 * bang) + ')');
+    ng.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.save();
+    ctx.scale(1, nRy/nRx);
+    ctx.beginPath();
+    ctx.arc(nbp.sx, nbp.sy * (nRx/nRy), nRx, 0, Math.PI*2);
+    ctx.fillStyle = ng;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /* ── GALAXIA ── */
+  for(var gi = 0; gi < GALAXY.length; gi++){
+    var gp = GALAXY[gi];
+    gp.bobPh += gp.bobSpd;
+    var ga2 = galaxyAngle * (gp.speed / 0.0003);
+    var gc = Math.cos(ga2), gs = Math.sin(ga2);
+    var grx = (gp.px * gc - gp.pz * gs) * bang;
+    var grz = (gp.px * gs + gp.pz * gc) * bang;
+    var gry = (gp.py + Math.sin(gp.bobPh) * gp.bobAmp) * bang;
+    var gpr = project(grx, gry, grz);
+    if(gpr.scale <= 0) continue;
+    ctx.beginPath();
+    ctx.arc(gpr.sx, gpr.sy, gp.r * gpr.scale * 2.2, 0, Math.PI*2);
+    ctx.fillStyle = 'hsla(' + gp.hue + ',' + gp.sat + '%,' + gp.lit + '%,' + (gp.al * bang) + ')';
+    ctx.fill();
+  }
+
+  /* ── POLVO ESTELAR ── */
+  for(var ddi = 0; ddi < DUST.length; ddi++){
+    var du = DUST[ddi];
+    du.phase += du.speed;
+    var dpulse = 0.5 + 0.5 * Math.sin(du.phase);
+    var dc = Math.cos(galaxyAngle * 0.6), ds = Math.sin(galaxyAngle * 0.6);
+    var drx = (du.x * dc - du.z * ds) * bang;
+    var drz = (du.x * ds + du.z * dc) * bang;
+    var dpr = project(drx, du.y * bang, drz);
+    if(dpr.scale <= 0) continue;
+    ctx.beginPath();
+    ctx.arc(dpr.sx, dpr.sy, du.r * dpr.scale * 1.8, 0, Math.PI*2);
+  ctx.fillStyle = 'hsla(' + du.hue + ',70%,55%,' + (du.al * dpulse * bang) + ')';
+    ctx.fill();
+  }
+
+  /* ── PLANETAS ── */
+  for(var pi = 0; pi < PLANETS.length; pi++) drawPlanet(PLANETS[pi]);
+
+  /* ── COMETAS ── */
+  for(var comi = 0; comi < COMETS.length; comi++){
+    var cm = COMETS[comi];
+    cm.life++;
+    if(cm.life > cm.maxLife){ COMETS[comi] = spawnComet(); continue; }
+    cm.x += cm.vx; cm.y += cm.vy; cm.z += cm.vz;
+    var lifeRatio = cm.life / cm.maxLife;
+    var comAl = lifeRatio < 0.1 ? lifeRatio * 10 : lifeRatio > 0.8 ? (1 - lifeRatio) * 5 : 1;
+    for(var tl = 0; tl < cm.tailLen; tl++){
+      var tp = project(
+        (cm.x - cm.vx * tl * 2.5) * bang,
+        (cm.y - cm.vy * tl * 2.5) * bang,
+        (cm.z - cm.vz * tl * 2.5) * bang
+      );
+      if(tp.scale <= 0) continue;
+      var tailAl = (1 - tl / cm.tailLen) * comAl * bang;
+      ctx.beginPath();
+      ctx.arc(tp.sx, tp.sy, cm.r * tp.scale * (1 - tl/cm.tailLen) * 2, 0, Math.PI*2);
+      ctx.fillStyle = 'hsla(' + cm.hue + ',90%,80%,' + tailAl + ')';
+      ctx.fill();
+    }
+  }
+
+  /* ── FRASES ── */
+  for(var fli = 0; fli < FRASE_ITEMS.length; fli++){
+    var itm = FRASE_ITEMS[fli];
+    itm.bobPh += itm.bobSpd;
+    var bobY = Math.sin(itm.bobPh) * itm.bobAmp;
+    var ic = Math.cos(galaxyAngle * 0.45), iis = Math.sin(galaxyAngle * 0.45);
+    var irx = (itm.px * ic - itm.pz * iis) * bang;
+    var irz = (itm.px * iis + itm.pz * ic) * bang;
+    var iry = (itm.py + bobY) * bang;
+    var fpr = project(irx, iry, irz);
+    if(fpr.scale < 0.04) continue;
+    var fal = Math.min(1, fpr.scale * 2.2) * bang;
+    if(fal < 0.05) continue;
+    ctx.save();
+    ctx.translate(fpr.sx, fpr.sy);
+    ctx.globalAlpha = fal;
+    var fs = itm.fontSize * fpr.scale;
+    ctx.font = 'bold ' + (fs * 16) + 'px Quicksand, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = '#c0392b';
+    ctx.shadowBlur = 12;
+    ctx.fillStyle = 'rgba(220,200,140,0.9)'; /* texto ámbar */
+    ctx.fillText(itm.txt, 0, 0);
+    ctx.shadowBlur = 0;
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  /* contador visible */
+  document.getElementById('star-count').textContent = STARS.length + GALAXY.length;
+
+  /* ── CONSTELACIONES ── */
+  if(bang > 0.3 && CONSTELLATIONS.length){
+    var cangle = galaxyAngle * 0.3;
+    var ccos = Math.cos(cangle), csin2 = Math.sin(cangle);
+    for(var ci2 = 0; ci2 < CONSTELLATIONS.length; ci2++){
+      var con = CONSTELLATIONS[ci2];
+      /* proyectar puntos */
+      var pts = [];
+      var ok = true;
+      for(var cpi = 0; cpi < con.pts.length; cpi++){
+        var cp = con.pts[cpi];
+        var crx = (cp.x * ccos - cp.z * csin2) * bang;
+        var crz = (cp.x * csin2 + cp.z * ccos) * bang;
+        var cpr2 = project(crx, cp.y * bang, crz);
+        if(cpr2.scale < 0.05){ ok = false; break; }
+        pts.push(cpr2);
+      }
+      if(!ok) continue;
+      var cAl = Math.min(1, (bang - 0.3) / 0.3) * 0.55;
+      /* líneas */
+      ctx.save();
+      ctx.strokeStyle = 'rgba(200,170,255,' + cAl + ')';
+      ctx.lineWidth = 0.8;
+      ctx.setLineDash([3, 5]);
+      for(var li = 0; li < con.lines.length; li++){
+        var la = pts[con.lines[li][0]], lb = pts[con.lines[li][1]];
+        ctx.beginPath();
+        ctx.moveTo(la.sx, la.sy);
+        ctx.lineTo(lb.sx, lb.sy);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+      /* puntos de estrella */
+      for(var cpi2 = 0; cpi2 < pts.length; cpi2++){
+        var cpt = pts[cpi2];
+        ctx.beginPath();
+        ctx.arc(cpt.sx, cpt.sy, 2.5 * cpt.scale * 2, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(230,200,255,' + (cAl * 1.6) + ')';
+        ctx.fill();
+        /* glow */
+        var cg = ctx.createRadialGradient(cpt.sx, cpt.sy, 0, cpt.sx, cpt.sy, 7 * cpt.scale);
+        cg.addColorStop(0, 'rgba(200,150,255,' + (cAl * 0.8) + ')');
+        cg.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = cg;
+        ctx.beginPath();
+        ctx.arc(cpt.sx, cpt.sy, 7 * cpt.scale, 0, Math.PI*2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+  }
+
+  /* ── METEOROS (lluvia periódica) ── */
+  var now = Date.now();
+  if(bang > 0.5 && now - lastMeteorShower > METEOR_INTERVAL){
+    lastMeteorShower = now;
+    for(var mi2 = 0; mi2 < 10; mi2++){
+      METEORS.push(spawnMeteor());
+    }
+  }
+  for(var mi3 = METEORS.length - 1; mi3 >= 0; mi3--){
+    var met = METEORS[mi3];
+    met.life++;
+    met.x += met.vx; met.y += met.vy;
+    var mrat = met.life / met.maxLife;
+    var mAl = mrat < 0.15 ? mrat / 0.15 : mrat > 0.7 ? (1 - mrat) / 0.3 : 1;
+    if(met.life > met.maxLife){ METEORS.splice(mi3, 1); continue; }
+    /* cuerpo + cola */
+    for(var mtl = 0; mtl < met.tailLen; mtl++){
+      var tx2 = met.x - met.vx * mtl * 1.8;
+      var ty2 = met.y - met.vy * mtl * 1.8;
+      var tlAl = (1 - mtl / met.tailLen) * mAl * 0.9;
+      ctx.beginPath();
+      ctx.arc(tx2, ty2, met.r * (1 - mtl / met.tailLen) * 1.5, 0, Math.PI*2);
+      ctx.fillStyle = 'hsla(' + met.hue + ',95%,85%,' + tlAl + ')';
+      ctx.fill();
+    }
+    if(met.life > met.maxLife) METEORS.splice(mi3, 1);
+  }
+
+  /* ── PARTÍCULAS DE CLIC ── */
+  for(var ki = CLICK_PARTICLES.length - 1; ki >= 0; ki--){
+    var kp = CLICK_PARTICLES[ki];
+    kp.life++;
+    kp.x += kp.vx; kp.y += kp.vy;
+    kp.vy += 0.04; /* gravedad suave */
+    kp.vx *= 0.97; kp.vy *= 0.97;
+    var kAl = Math.max(0, 1 - kp.life / kp.maxLife);
+    if(kAl <= 0){ CLICK_PARTICLES.splice(ki, 1); continue; }
+    /* estrellita de 4 puntas */
+    ctx.save();
+    ctx.translate(kp.x, kp.y);
+    ctx.rotate(kp.life * 0.08);
+    ctx.globalAlpha = kAl;
+    ctx.fillStyle = 'hsla(' + kp.hue + ',100%,80%,1)';
+    var ks = kp.r * (1 - kp.life / kp.maxLife * 0.5);
+    ctx.beginPath();
+    for(var pt2 = 0; pt2 < 4; pt2++){
+      var ang2 = (pt2 / 4) * Math.PI * 2;
+      ctx.lineTo(Math.cos(ang2) * ks * 2.5, Math.sin(ang2) * ks * 2.5);
+      ctx.lineTo(Math.cos(ang2 + Math.PI/4) * ks * 0.8, Math.sin(ang2 + Math.PI/4) * ks * 0.8);
+    }
+    ctx.closePath();
+    ctx.fill();
+    /* glow */
+    ctx.beginPath();
+    ctx.arc(0, 0, ks * 3, 0, Math.PI*2);
+    var kg = ctx.createRadialGradient(0,0,0,0,0,ks*3);
+    kg.addColorStop(0, 'hsla(' + kp.hue + ',100%,80%,' + (kAl*0.6) + ')');
+    kg.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = kg;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  /* ── CONSTELACIÓN DE INICIALES ── */
+  if(showInitials && bang > 0.2){
+    var iAl = Math.min(1, (Date.now() - initialsShowTime) / 800);
+    ctx.save();
+    ctx.strokeStyle = 'rgba(253,224,71,' + (iAl * 0.8) + ')';
+    ctx.lineWidth = 1.2;
+    ctx.shadowColor = '#fbbf24';
+    ctx.shadowBlur = 8;
+    for(var ili = 0; ili < INITIALS_LINES.length; ili++){
+      var il = INITIALS_LINES[ili];
+      var ipr1 = project(il.x1 * bang, il.y1 * bang, il.z1 * bang);
+      var ipr2 = project(il.x2 * bang, il.y2 * bang, il.z2 * bang);
+      if(ipr1.scale <= 0 || ipr2.scale <= 0) continue;
+      ctx.beginPath();
+      ctx.moveTo(ipr1.sx, ipr1.sy);
+      ctx.lineTo(ipr2.sx, ipr2.sy);
+      ctx.stroke();
+    }
+    for(var ipi = 0; ipi < INITIALS_PTS.length; ipi++){
+      var ip = INITIALS_PTS[ipi];
+      var ipp = project(ip.x * bang, ip.y * bang, ip.z * bang);
+      if(ipp.scale <= 0) continue;
+      ctx.beginPath();
+      ctx.arc(ipp.sx, ipp.sy, 3 * ipp.scale * 2, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(253,224,71,' + iAl + ')';
+      ctx.fill();
+    }
+    ctx.shadowBlur = 0;
+    ctx.restore();
+  }
+
+  requestAnimationFrame(render);
+}
+render();
+
+/* ────────────────────────────────
+   CONTROLES DE CÁMARA
+──────────────────────────────── */
+cv.addEventListener('mousedown', function(e){
+  if(e.button !== 0) return;
+  isDrag = true; cv.classList.add('drag');
+  lastMX = e.clientX; lastMY = e.clientY;
+  velX = 0; velY = 0;
+  cancelAnimationFrame(rafId);
+});
+window.addEventListener('mousemove', function(e){
+  if(!isDrag) return;
+  velY = (e.clientX - lastMX) * 0.006;
+  velX = (e.clientY - lastMY) * 0.006;
+  cam.rotY += velY;
+  cam.rotX = clamp(cam.rotX + velX, 0.05, Math.PI * 0.6);
+  lastMX = e.clientX; lastMY = e.clientY;
+});
+window.addEventListener('mouseup', function(){
+  isDrag = false;
+  rafId = requestAnimationFrame(inercia);
+});
+cv.addEventListener('wheel', function(e){
+  e.preventDefault();
+  cam.zoom = clamp(cam.zoom * (e.deltaY < 0 ? 1.1 : 0.92), MIN_Z, MAX_Z);
+}, { passive: false });
+
+/* touch */
+var lastTouchDist = 0, baseZoom = 1, touchStartX = 0, touchStartY = 0;
+cv.addEventListener('touchstart', function(e){
+  velX = 0; velY = 0; cancelAnimationFrame(rafId);
+  if(e.touches.length === 1){
+    isDrag = true;
+    lastMX = touchStartX = e.touches[0].clientX;
+    lastMY = touchStartY = e.touches[0].clientY;
+  } else if(e.touches.length === 2){
+    isDrag = false;
+    lastTouchDist = Math.hypot(
+      e.touches[1].clientX - e.touches[0].clientX,
+      e.touches[1].clientY - e.touches[0].clientY
+    );
+    baseZoom = cam.zoom;
+  }
+}, { passive: true });
+cv.addEventListener('touchmove', function(e){
+  if(e.touches.length === 1 && isDrag){
+    var tx = e.touches[0].clientX, ty = e.touches[0].clientY;
+    velY = (tx - lastMX) * 0.006;
+    velX = (ty - lastMY) * 0.006;
+    cam.rotY += velY;
+    cam.rotX = clamp(cam.rotX + velX, 0.05, Math.PI * 0.6);
+    lastMX = tx; lastMY = ty;
+  } else if(e.touches.length === 2){
+    var dist = Math.hypot(
+      e.touches[1].clientX - e.touches[0].clientX,
+      e.touches[1].clientY - e.touches[0].clientY
+    );
+    cam.zoom = clamp(baseZoom * (dist / lastTouchDist), MIN_Z, MAX_Z);
+  }
+}, { passive: true });
+cv.addEventListener('touchend', function(e){
+  if(e.touches.length === 0){
+    isDrag = false;
+    /* partículas de toque */
+    if(e.changedTouches.length && gameStarted){
+      spawnClickBurst(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+    }
+    rafId = requestAnimationFrame(inercia);
+  }
+}, { passive: true });
+
+function inercia(){
+  if(Math.abs(velX) < 0.0002 && Math.abs(velY) < 0.0002) return;
+  velX *= 0.94; velY *= 0.94;
+  cam.rotY += velY;
+  cam.rotX = clamp(cam.rotX + velX, 0.05, Math.PI * 0.6);
+  rafId = requestAnimationFrame(inercia);
+}
+
+/* ────────────────────────────────
+   PARTÍCULAS AL HACER CLIC EN CANVAS
+──────────────────────────────── */
+cv.addEventListener('click', function(e){
+  if(!gameStarted) return;
+  spawnClickBurst(e.clientX, e.clientY);
+});
+cv.addEventListener('touchend', function(e){
+  /* ya existe el touchend de cámara — las partículas se hacen desde ahí también */
+}, { passive: true });
+
+/* ────────────────────────────────
+   PARALLAX EN EL MODAL
+──────────────────────────────── */
+(function(){
+  var modalEl = document.getElementById('modal-inicio');
+  var starsEl = document.getElementById('floating-stars');
+  document.addEventListener('mousemove', function(e){
+    if(!modalEl || modalEl.style.display === 'none') return;
+    var dx = (e.clientX / window.innerWidth  - 0.5) * 30;
+    var dy = (e.clientY / window.innerHeight - 0.5) * 30;
+    starsEl.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+  });
+})();
+
+/* ────────────────────────────────
+   LÓGICA DE BOTONES / MODAL
+──────────────────────────────── */
+var audio = document.getElementById('audio');
+var musicPlaying = false;
+
+document.getElementById('btn-entrar').addEventListener('click', function(){
+  /* 1. ocultar modal de bienvenida */
+  var modal = document.getElementById('modal-inicio');
+  modal.classList.add('oculto');
+  setTimeout(function(){ modal.style.display = 'none'; }, 800);
+
+  /* 2. mostrar pantalla de intro y arrancar animación */
+  var introScreen = document.getElementById('intro-screen');
+  introScreen.style.display = 'flex';
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      introScreen.style.transition = 'opacity 0.6s ease';
+      introScreen.style.opacity = '1';
+      /* pequeño delay para que el fade-in se vea antes de empezar */
+      setTimeout(function(){
+        window.startIntroAnimation();
+      }, 400);
+    });
+  });
+});
+
+document.getElementById('btn-carta').addEventListener('click', function(){
+  /* mostrar sobre primero */
+  var sobreEl = document.getElementById('sobre-wrapper');
+  sobreEl.classList.add('on');
+  /* resetear estado */
+  document.getElementById('sobre-flap').classList.remove('open');
+  document.getElementById('sobre-carta-mini').classList.remove('salir');
+});
+
+/* clic en el sobre para abrirlo */
+document.getElementById('sobre-scene').addEventListener('click', function(){
+  var flap  = document.getElementById('sobre-flap');
+  var mini  = document.getElementById('sobre-carta-mini');
+  if(!flap.classList.contains('open')){
+    flap.classList.add('open');
+    mini.classList.add('salir');
+    /* tras la animación mostrar la carta real */
+    setTimeout(function(){
+      document.getElementById('sobre-wrapper').classList.remove('on');
+      abrirCartaConTipeo();
+    }, 1400);
+  }
+});
+
+document.getElementById('sobre-wrapper').addEventListener('click', function(e){
+  if(e.target === this) this.classList.remove('on');
+});
+
+/* ── CARTA CON TIPEO ANIMADO ── */
+var CARTA_TEXTOS = [
+  {
+    id: 'carta-p1',
+    txt: 'Sweet Home nos enseña que incluso en el peor de los mundos, los humanos encuentran razones para seguir. Y tú eres de esas personas que hacen que valga la pena: de las que luchan, de las que sienten, de las que no se rinden.'
+  },
+  {
+    id: 'carta-p2',
+    txt: 'Como Cha Hyun-su descubre que hay algo que vale más que sobrevivir — hay algo por lo que vivir — yo encontré en ti eso: una amiga que me recuerda que ser humano es lo más valioso que existe. Gracias por existir así, completa y real.'
+  },
+  {
+    id: 'carta-p3',
+    txt: '\"Ser humano significa luchar para seguir siéndolo.\" Y tú, amiga, luchas todos los días y lo logras con una gracia que no tienes idea. Este universo es mejor porque estás en él. �🔥'
+  }
+];
+var CARTA_FIRMA = 'Tuyo, desde el hogar más dulce 🏚️�';
+var typeIntervals = [];
+
+function typeText(el, text, delay, speed, cb){
+  el.textContent = '';
+  var i3 = 0;
+  var tid = setTimeout(function go(){
+    if(i3 < text.length){
+      el.textContent += text[i3++];
+      tid = setTimeout(go, speed);
+    } else if(cb) cb();
+  }, delay);
+  typeIntervals.push(tid);
+}
+
+function abrirCartaConTipeo(){
+  /* limpiar textos anteriores */
+  typeIntervals.forEach(function(id){ clearTimeout(id); });
+  typeIntervals = [];
+  CARTA_TEXTOS.forEach(function(c){ document.getElementById(c.id).textContent = ''; });
+  document.getElementById('carta-firma').textContent = '';
+
+  document.getElementById('overlay-carta').classList.add('on');
+
+  /* escribir párrafo por párrafo en cascada */
+  var acum = 300;
+  CARTA_TEXTOS.forEach(function(c, idx){
+    typeText(document.getElementById(c.id), c.txt, acum, 22, null);
+    acum += c.txt.length * 22 + 200;
+  });
+  typeText(document.getElementById('carta-firma'), CARTA_FIRMA, acum, 35, null);
+}
+
+document.getElementById('overlay-carta').addEventListener('click', function(e){
+  if(e.target === this) cerrarCarta();
+});
+
+function cerrarCarta(){
+  document.getElementById('overlay-carta').classList.remove('on');
+  typeIntervals.forEach(function(id){ clearTimeout(id); });
+}
+window.cerrarCarta = cerrarCarta;
+
+/* ── BOTÓN CONSTELACIÓN DE INICIALES ── */
+document.getElementById('btn-constelacion').addEventListener('click', function(){
+  showInitials = !showInitials;
+  initialsShowTime = Date.now();
+  this.classList.toggle('active', showInitials);
+});
+
+document.getElementById('btn-musica').addEventListener('click', function(){
+  if(musicPlaying){
+    audio.pause();
+    musicPlaying = false;
+    this.classList.remove('playing');
+    this.textContent = '🔇';
+  } else {
+    audio.play().catch(function(){});
+    musicPlaying = true;
+    document.getElementById('btn-musica').classList.add('playing');
+    document.getElementById('btn-musica').textContent = '🎵';
+  }
+});
+</script>
+</body>
+</html>
